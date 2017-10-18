@@ -222,7 +222,8 @@ else
     ha = h * ratios / sumR;
 end
 %
-y0s = y0 + h - cumsum( ha );
+y0s = tiLow + h - cumsum( ha );
+
 
 for k = 1:Dm %correct y label to be in figure
     ax = A(k);
