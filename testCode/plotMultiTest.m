@@ -14,7 +14,12 @@ u = linspace(0,1,nrPts)';
 %
 degree = 8;
 %
+try
 B = bernsteinBasis( u, degree );
+catch
+    B = vander(u);
+    B = B(:,end-degree+1:end);
+end
 %
 xLabel = '$$t \, [s]$$';
 for k=1:degree+1
