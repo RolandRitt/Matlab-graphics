@@ -297,6 +297,7 @@ end
 %
 title(A(1), '');
 linkaxes( A, 'x');
+axis(A, 'tight');
 set(zoom(gcf),'Motion','horizontal','Enable','on');
 
 
