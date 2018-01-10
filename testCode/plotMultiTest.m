@@ -27,3 +27,14 @@ for k=1:degree+1
 end;
 F = figureGen;
 plotMulti( u, B, xLabel, yLabels );
+
+F = figureGen;
+
+%
+
+for i=1:degree
+   D{i} =  B(:,randi([1,degree], randi([1,degree]),1));
+end
+plotMulti( u, D, xLabel, yLabels );
+
+
