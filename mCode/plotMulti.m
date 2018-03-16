@@ -54,8 +54,8 @@ end
 %
 
 if ~iscell(D)
-addRequired(p,'D',@(x)validateattributes(x,{'numeric'},...
-    {'ndims', 2,'real','nrows',xn}));
+    addRequired(p,'D',@(x)validateattributes(x,{'numeric'},...
+        {'ndims', 2,'real','nrows',xn}));
 else
     for i=D;
         validateattributes(i{1},{'numeric'},...
@@ -146,24 +146,25 @@ for k=1:(Dm)
     %
     
     %% add Y axis label and ticks
-    name = strrep(p.Results.yLabels{k},'_','-');
+    
     
     if mod(k,2) == 0
         set( A(k),'YAxisLocation', 'right');
-%                  posLabel = [1.05, 0.5, 0];
+        %                  posLabel = [1.05, 0.5, 0];
         %         posLabel = [-0.05, 0.5, 0];
         LabelAl = 'top';
     else
         set( A(k),'YAxisLocation', 'left');
-%                  posLabel = [-0.05, 0.5, 0];
+        %                  posLabel = [-0.05, 0.5, 0];
         LabelAl = 'bottom';
     end
     
-    
-    ylabel( name, 'Rotation', 90, ...
-        'VerticalAlignment', LabelAl,...
-        'HorizontalAlignment', 'center');
-    
+    if ~isempty(p.Results.yLabels)
+        name = strrep(p.Results.yLabels{k},'_','-');
+        ylabel( name, 'Rotation', 90, ...
+            'VerticalAlignment', LabelAl,...
+            'HorizontalAlignment', 'center');
+    end
     
     grid on;
     %
@@ -244,11 +245,11 @@ y0s = tiLow + h - cumsum( ha );
 
 
 for k = 1:Dm %correct y label to be in figure
-
+    
     %
     A(k).Position(2) = y0s(k);
     A(k).Position(4) = ha(k) - offset;
-
+    
 end
 yLabelPoseven = zeros(round(Dm/2),3);
 yLabelPosodd = zeros(floor(Dm/2),3);
@@ -256,17 +257,17 @@ for k = 1:Dm %correct Title label to be in figure
     %
     A(k).Position(1) = outPosleftMax;
     A(k).Position(3) = outPosrightMin - outPosleftMax;
-%     set(A(k), 'ActivePositionProperty', 'OuterPosition');
-
-
-
-     if mod(k,2) == 0
+    %     set(A(k), 'ActivePositionProperty', 'OuterPosition');
+    
+    
+    
+    if mod(k,2) == 0
         yLTemp = get( A(k),'yLabel');
         set(yLTemp, 'Units', 'normalized');
         yLabelPoseven(k/2,:) = get(yLTemp, 'Pos');
     else
         yLTemp = get( A(k),'yLabel');
-%                  posLabel = [1.05, 0.5, 0];
+        %                  posLabel = [1.05, 0.5, 0];
         %         posLabel = [-0.05, 0.5, 0];
         set(yLTemp, 'Units', 'normalized')
         yLabelPosodd(round(k/2),:) = get(yLTemp, 'Pos');
