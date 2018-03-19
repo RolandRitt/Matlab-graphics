@@ -154,7 +154,7 @@ for k=1:(Dm)
         set( A(k),'YAxisLocation', 'right');
         %                  posLabel = [1.05, 0.5, 0];
         %         posLabel = [-0.05, 0.5, 0];
-        LabelAl = 'top'
+        LabelAl = 'top';
         %         LabelAl = 'bottom';
     else
         set( A(k),'YAxisLocation', 'left');
