@@ -148,7 +148,6 @@ for k=1:(Dm)
     %
     
     %% add Y axis label and ticks
-    name = strrep(p.Results.yLabels{k},'_','-');
     
     if mod(k,2) == 0
         set( A(k),'YAxisLocation', 'right');
