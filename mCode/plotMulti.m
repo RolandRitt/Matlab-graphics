@@ -160,10 +160,11 @@ for k=1:(Dm)
     end
     
     if ~isempty(p.Results.yLabels)
-        name = strrep(p.Results.yLabels{k},'_','-');
+        name = p.Results.yLabels{k};
+%         name = strrep(p.Results.yLabels{k},'_','-');
         ylabel( name, 'Rotation', 90, ...
             'VerticalAlignment', LabelAl,...
-            'HorizontalAlignment', 'center');
+            'HorizontalAlignment', 'center', 'Interpreter', 'Latex');
     end
     
     grid on;
