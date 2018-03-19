@@ -42,7 +42,7 @@ function [A, ph] = plotMulti( x, D, varargin )
 p = inputParser;
 p.KeepUnmatched = true;
 if isdatetime(x)
-    addRequired(p,'x',@(x) validateattributes(x,{'datetime'}, {'nonempty', 'column'}));    
+    addRequired(p,'x',@(x) validateattributes(x,{'datetime'}, {'nonempty', 'column'}));
 elseif isduration(x)
     addRequired(p,'x',@(x) validateattributes(x,{'duration'}, {'nonempty', 'column'}));
 else
@@ -56,8 +56,8 @@ end
 %
 
 if ~iscell(D)
-addRequired(p,'D',@(x)validateattributes(x,{'numeric'},...
-    {'ndims', 2,'real','nrows',xn}));
+    addRequired(p,'D',@(x)validateattributes(x,{'numeric'},...
+        {'ndims', 2,'real','nrows',xn}));
 else
     for i=D;
         validateattributes(i{1},{'numeric'},...
@@ -150,22 +150,26 @@ for k=1:(Dm)
     %% add Y axis label and ticks
     
     if mod(k,2) == 0
+        
         set( A(k),'YAxisLocation', 'right');
-%                  posLabel = [1.05, 0.5, 0];
+        %                  posLabel = [1.05, 0.5, 0];
         %         posLabel = [-0.05, 0.5, 0];
-        LabelAl = 'top';
+        LabelAl = 'top'
+        %         LabelAl = 'bottom';
     else
         set( A(k),'YAxisLocation', 'left');
-%                  posLabel = [-0.05, 0.5, 0];
+        %                  posLabel = [-0.05, 0.5, 0];
         LabelAl = 'bottom';
     end
     
     if ~isempty(p.Results.yLabels)
         name = p.Results.yLabels{k};
-%         name = strrep(p.Results.yLabels{k},'_','-');
-        ylabel( name, 'Rotation', 90, ...
+        %         name = strrep(p.Results.yLabels{k},'_','-');
+        ylabel( A(k), name, 'Rotation', 90, ...
             'VerticalAlignment', LabelAl,...
-            'HorizontalAlignment', 'center', 'Interpreter', 'Latex');
+            'HorizontalAlignment', 'center', 'Interpreter', 'tex');
+        %         ylabel( A(k), name, 'Rotation', 90, ...
+        %             'HorizontalAlignment', 'center', 'Interpreter', 'tex');
     end
     
     grid on;
@@ -193,7 +197,23 @@ for k = 1:Dm %correct y label to be in figure
     outerpos(3) = 1;
     ax.OuterPosition = outerpos;
     
+    
+    
+    
     ti = ax.TightInset;
+    
+    % plot tight inset
+    %     h = annotation('rectangle');
+    %     c = h.Color;
+    %     h.Color = 'red';
+    %
+    %     h.Position = ax.Position;
+    %     h.Position(1) = ax.Position(1) - ti(1);
+    %     h.Position(2) = ax.Position(2) - ti(2);
+    %     h.Position(3) = ax.Position(3) + (ti(3)+ti(1));
+    %     h.Position(4) = ax.Position(4) + (ti(2)+ti(4));
+    %     h.Position(3) = 1- (ti(1)+ti(3));
+    
     ax.Position(1) = ti(1);
     ax.Position(3) = 1- (ti(1)+ti(3));
     outPosleft(k) = ax.Position(1);
@@ -215,9 +235,15 @@ outPosrightMin = min(outPosright);
 % outPosleftMax = min(outPosleft);
 % outPosrightMin = max(outPosright);
 
+%% set up xlabel
+if ~isempty( p.Results.xLabel )
+    xlabel(A(end),  p.Results.xLabel );
+end
+
 
 %% resize heigths of axes
 
+% move unlabel ends of axes to the very left or right
 A(1).OuterPosition(2) = 0;
 A(1).OuterPosition(4) = 1;
 A(end).OuterPosition(2) = 0;
@@ -228,7 +254,6 @@ tiHigh = 1 - A(1).TightInset(4);
 h = tiHigh - tiLow;
 offset = p.Results.offsetScale * h ;
 %
-%% Setup the axes
 ha = zeros(Dm,1);
 %
 if isempty( p.Results.ratios )
@@ -245,31 +270,34 @@ end
 %
 y0s = tiLow + h - cumsum( ha );
 
-
+% resize with of axes
 for k = 1:Dm %correct y label to be in figure
-
+    
     %
     A(k).Position(2) = y0s(k);
     A(k).Position(4) = ha(k) - offset;
-
+    
 end
+
+
+% move the labeled end of axes to be within the figure
 yLabelPoseven = zeros(round(Dm/2),3);
 yLabelPosodd = zeros(floor(Dm/2),3);
 for k = 1:Dm %correct Title label to be in figure
     %
     A(k).Position(1) = outPosleftMax;
     A(k).Position(3) = outPosrightMin - outPosleftMax;
-%     set(A(k), 'ActivePositionProperty', 'OuterPosition');
-
-
-
-     if mod(k,2) == 0
+    %     set(A(k), 'ActivePositionProperty', 'OuterPosition');
+    
+    
+    
+    if mod(k,2) == 0
         yLTemp = get( A(k),'yLabel');
         set(yLTemp, 'Units', 'normalized');
         yLabelPoseven(k/2,:) = get(yLTemp, 'Pos');
     else
         yLTemp = get( A(k),'yLabel');
-%                  posLabel = [1.05, 0.5, 0];
+        %                  posLabel = [1.05, 0.5, 0];
         %         posLabel = [-0.05, 0.5, 0];
         set(yLTemp, 'Units', 'normalized')
         yLabelPosodd(round(k/2),:) = get(yLTemp, 'Pos');
@@ -282,21 +310,22 @@ yLabelPosodd(:,1) = maxYLabel;
 yLabelPoseven(:,1) = minYLabel;
 
 %% I you d'like to align the yLabels
-% for k = 1:Dm %correct Title label to be in figure
-%      if mod(k,2) == 0
-%         yLTemp = get( A(k),'yLabel');
-%        set(yLTemp, 'Pos', yLabelPoseven(k/2,:));
-%     else
-%         yLTemp = get( A(k),'yLabel');
-%        set(yLTemp, 'Pos', yLabelPosodd(round(k/2),:));
-%     end
-% end
-
-%% annotate the x axis;
-if ~isempty( p.Results.xLabel )
-    axes( A(Dm) );
-    xlabel( p.Results.xLabel );
+for k = 1:Dm %correct Title label to be in figure
+    if mod(k,2) == 0
+        yLTemp = get( A(k),'yLabel');
+        set(yLTemp, 'Pos', yLabelPoseven(k/2,:));
+    else
+        yLTemp = get( A(k),'yLabel');
+        set(yLTemp, 'Pos', yLabelPosodd(round(k/2),:));
+        
+    end
 end
+
+% %% annotate the x axis;
+% if ~isempty( p.Results.xLabel )
+%     axes( A(Dm) );
+%     xlabel( p.Results.xLabel );
+% end
 %
 title(A(1), '');
 linkaxes( A, 'x');
