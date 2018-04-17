@@ -71,6 +71,7 @@ end
 addOptional(p,'xLabel',[],@(x)validateattributes(x,{'char'},{'vector'}));
 %
 addOptional(p,'yLabels',[],@(x)validateattributes(x,{'cell'},{'vector'}));
+addOptional(p,'yLabelsLatex',[],@islogical);
 %
 addParameter(p,'ratios',[],@(x)validateattributes(x,{'numeric'},...
     {'real','finite','nonnan','positive', 'column','nrows',Dm}));
@@ -164,12 +165,14 @@ for k=1:(Dm)
     
     if ~isempty(p.Results.yLabels)
         name = p.Results.yLabels{k};
-        %         name = strrep(p.Results.yLabels{k},'_','-');
+        if ~p.Results.yLabelsLatex
+                 name = strrep(p.Results.yLabels{k},'_','-');
+        end
+     
         ylabel( A(k), name, 'Rotation', 90, ...
             'VerticalAlignment', LabelAl,...
             'HorizontalAlignment', 'center');
-        %         ylabel( A(k), name, 'Rotation', 90, ...
-        %             'HorizontalAlignment', 'center', 'Interpreter', 'tex');
+      
     end
     
     grid on;
