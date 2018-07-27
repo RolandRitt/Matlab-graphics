@@ -11,10 +11,13 @@ function [A, ph] = plotMulti( x, D, varargin )
 %   x: column vector for the common x values
 %   D: a matrix of data, each column represents a seperate
 %       plot.
-%   xLable: (optional)
-%   yLabels: (optional) cell array of y-labels
-%   ratios: (key-value; optional) a vector of relative sized for the plots.
-%   offsetScale: (key-value; optional) set the vertival offset between the plots,
+%   xLabel: (optional);
+%   yLabels: (optional) cell array of y-labels;
+%   ratios: (key-value; optional) a vector of relative sized for the plots;
+%   offsetScale: (key-value; optional) set the vertival offset between the plots;
+%   yLabelsLatex: (key-value; optional), binary value, indicating if the
+%   strings are latex strings or non latex (if non-latex, underscores are
+%   substituted with \_ to show the underscore
 %   unmatched: (key-value; optional) all not specified key-value pairs are
 %   passed to the plot function;
 %
@@ -166,7 +169,7 @@ for k=1:(Dm)
     if ~isempty(p.Results.yLabels)
         name = p.Results.yLabels{k};
         if ~p.Results.yLabelsLatex
-                 name = strrep(p.Results.yLabels{k},'_','-');
+                 name = strrep(p.Results.yLabels{k},'_',' \_');
         end
      
         ylabel( A(k), name, 'Rotation', 90, ...
