@@ -81,12 +81,14 @@ addParameter(p,'ratios',[],@(x)validateattributes(x,{'numeric'},...
 %
 addParameter(p,'offsetScale',[0.01],@(x)validateattributes(x,{'numeric'},...
     {'real','finite','nonnan', 'scalar'}));
+addOptional(p,'bYLabelHorizontal',false,@islogical);
 % addParameter(p,'plotParams',{},@iscell);
 %
 parse(p,x,D,varargin{:});
 
 tmp = [fieldnames(p.Unmatched),struct2cell(p.Unmatched)];
 UnmatchedArgs = reshape(tmp',[],1)';
+bYLabelHorizontal = p.Results.bYLabelHorizontal;
 %% setup the frame for all the axes
 % Test if an Axis is already open, if yes use it
 
@@ -153,34 +155,50 @@ for k=1:(Dm)
     
     %% add Y axis label and ticks
     
-    if mod(k,2) == 0
+    if mod(k,2) == 0 %even
         
         set( A(k),'YAxisLocation', 'right');
         %                  posLabel = [1.05, 0.5, 0];
         %         posLabel = [-0.05, 0.5, 0];
-        LabelAl = 'top';
+        if bYLabelHorizontal
+            LabelRot = 0;
+            LabelAl = 'middle';
+            LabelHorAlign = 'left';
+        else
+            LabelRot = 90;
+            LabelAl = 'top';
+            LabelHorAlign = 'center';
+        end
         %         LabelAl = 'bottom';
     else
         set( A(k),'YAxisLocation', 'left');
         %                  posLabel = [-0.05, 0.5, 0];
-        LabelAl = 'bottom';
+        if bYLabelHorizontal
+            LabelRot = 0;
+            LabelAl = 'middle';
+            LabelHorAlign = 'right';
+        else
+            LabelRot = 90;
+            LabelAl = 'bottom';
+            LabelHorAlign = 'center';
+        end
     end
     
     if ~isempty(p.Results.yLabels)
         name = p.Results.yLabels{k};
         if ~p.Results.yLabelsLatex
-                 name = strrep(p.Results.yLabels{k},'_',' \_');
+            name = strrep(p.Results.yLabels{k},'_',' \_');
         end
-     
-        ylabel( A(k), name, 'Rotation', 90, ...
+        
+        ylabel( A(k), name, 'Rotation', LabelRot, ...
             'VerticalAlignment', LabelAl,...
-            'HorizontalAlignment', 'center');
-      
+            'HorizontalAlignment', LabelHorAlign);
+        
     end
     
     grid on;
     %
-    axis tight;
+%     axis tight;
     % Here I need to take care of rescaling the positions
     % of the yTicklabels
 end
@@ -222,6 +240,9 @@ for k = 1:Dm %correct y label to be in figure
     
     ax.Position(1) = ti(1);
     ax.Position(3) = 1- (ti(1)+ti(3));
+    
+    
+    
     outPosleft(k) = ax.Position(1);
     outPosright(k) = (ax.Position(1) + ax.Position(3));
     % from Matlab: https://de.mathworks.com/help/matlab/creating_plots/save-figure-with-minimal-white-space.html
@@ -237,6 +258,40 @@ for k = 1:Dm %correct y label to be in figure
 end
 outPosleftMax = max(outPosleft);
 outPosrightMin = min(outPosright);
+
+%% if horizontal y labels - correct position, since not captured in outer position
+if bYLabelHorizontal
+    for k = 1:Dm %correct Title label to be in figure
+             posAxTemp = get(A(k), 'Position');
+             tempYL = get(A(k),'ylabel');
+             set(tempYL, 'Units', 'normalized');
+             posYLabelTemp = get(tempYL, 'Extent');
+        if isOdd(k)
+    
+             diffX = posAxTemp(1) + posYLabelTemp(1)*posAxTemp(3);
+             if diffX<0
+                 tempx = A(k).Position(1);
+                 tempwidth = A(k).Position(3);
+                 A(k).Position(1) = tempx - diffX;
+                 A(k).Position(3) = tempwidth + diffX;
+             end
+
+        else
+             diffX = 1 - (posAxTemp(1)+posAxTemp(3)  + ((posYLabelTemp(1)+posYLabelTemp(3))-1)*posAxTemp(3));
+             if diffX<0
+                 tempwidth = A(k).Position(3);
+                 A(k).Position(3) = tempwidth + diffX;
+             end
+            
+        end
+        
+        outPosleft(k) = A(k).Position(1);
+        outPosright(k) = (A(k).Position(1) + A(k).Position(3));
+    end
+    outPosleftMax = max(outPosleft);
+    outPosrightMin = min(outPosright);
+end
+
 
 % outPosleftMax = min(outPosleft);
 % outPosrightMin = max(outPosright);
@@ -316,14 +371,16 @@ yLabelPosodd(:,1) = maxYLabel;
 yLabelPoseven(:,1) = minYLabel;
 
 %% I you d'like to align the yLabels
-for k = 1:Dm %correct Title label to be in figure
-    if mod(k,2) == 0
-        yLTemp = get( A(k),'yLabel');
-        set(yLTemp, 'Pos', yLabelPoseven(k/2,:));
-    else
-        yLTemp = get( A(k),'yLabel');
-        set(yLTemp, 'Pos', yLabelPosodd(round(k/2),:));
-        
+if ~bYLabelHorizontal %only correct if labels vertical, otherwise it would be tricky
+    for k = 1:Dm %correct Title label to be in figure
+        if mod(k,2) == 0
+            yLTemp = get( A(k),'yLabel');
+            set(yLTemp, 'Pos', yLabelPoseven(k/2,:));
+        else
+            yLTemp = get( A(k),'yLabel');
+            set(yLTemp, 'Pos', yLabelPosodd(round(k/2),:));
+
+        end
     end
 end
 
