@@ -16,8 +16,10 @@ function [A, ph] = plotMulti( x, D, varargin )
 %   ratios: (key-value; optional) a vector of relative sized for the plots;
 %   offsetScale: (key-value; optional) set the vertival offset between the plots;
 %   yLabelsLatex: (key-value; optional), binary value, indicating if the
-%   strings are latex strings or non latex (if non-latex, underscores are
-%   substituted with \_ to show the underscore
+%       strings are latex strings or non latex (if non-latex, underscores are
+%       substituted with \_ to show the underscore
+%   bYLabelHorizontal:(key-value; optional), logical (default false) to
+%   to rotate the y-labels (be horizontal)
 %   unmatched: (key-value; optional) all not specified key-value pairs are
 %   passed to the plot function;
 %
