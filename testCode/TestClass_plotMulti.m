@@ -23,7 +23,7 @@ classdef TestClass_plotMulti < matlab.unittest.TestCase
         x
     end
     
-    methods (TestMethodSetup)
+    methods (TestClassSetup)
         function setUpData(testCase)
             
             x = (1:1000)';
