@@ -1,6 +1,6 @@
 classdef TestClass_plotMulti < matlab.unittest.TestCase
     %
-    % Description : Test the plotSegments function
+    % Description : Test the plotMulti function
     %
     % Author :
     %    Paul O'Leary
