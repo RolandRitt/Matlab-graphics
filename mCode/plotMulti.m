@@ -200,6 +200,7 @@ for k=1:(Dm)
     
     grid on;
     %
+    axis(A(k), 'tight');
 %     axis tight;
     % Here I need to take care of rescaling the positions
     % of the yTicklabels
