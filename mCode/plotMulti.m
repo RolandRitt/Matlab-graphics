@@ -143,12 +143,17 @@ y0s = y0 + h - cumsum( ha );
 %preallocate
 A = gobjects(1, Dm);
 ph = gobjects(1, Dm);
+if iscell(D)
+    ph= cell(1, Dm);
+else
+    ph = gobjects(1, Dm);
+end
 for k=1:(Dm)
     A(k) = axes('Position',...
         [x0, y0s(k), w, ha(k) - offset ]);
     %
     if iscell(D)
-        ph ={};
+%         ph ={};
         ph{k} =plot(A(k), x, D{:,k}, UnmatchedArgs{:});
     else
         ph(k) =plot(A(k), x, D(:,k), UnmatchedArgs{:});
