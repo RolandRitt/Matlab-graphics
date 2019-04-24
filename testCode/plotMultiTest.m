@@ -9,14 +9,12 @@
 close all;
 clear;
 %%
-nrPts = 200;
-u = linspace(0,1,nrPts)';
+nrPts = 150;
+u = linspace(-1,1,nrPts)';
 %
-degree = 8;
+degree = 5;
 %
 try
-B = bernsteinBasis( u, degree );
-catch
     B = vander(u);
     B = B(:,end-degree+1:end);
 end
@@ -35,6 +33,5 @@ F = figureGen;
 for i=1:degree
    D{i} =  B(:,randi([1,degree], randi([1,degree]),1));
 end
-plotMulti( u, D, xLabel, yLabels );
-
+figH = plotMulti( u, D, xLabel, yLabels, 'LineWidth', 1.5 );
 
